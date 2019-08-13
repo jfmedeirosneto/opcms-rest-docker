@@ -1,0 +1,5 @@
+bottle==0.12.17
+ptvsd==4.3.0
+cheroot==6.5.5
+tinydb==3.13.0
+PyJWT==1.4.0
