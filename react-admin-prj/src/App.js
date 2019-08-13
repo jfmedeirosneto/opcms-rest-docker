@@ -1,7 +1,7 @@
 // in src/App.js
 import React from 'react';
 import { fetchUtils, Admin, Resource } from 'react-admin';
-import { SiteList, SiteEdit, SiteCreate } from './sites';
+import { SiteList, SiteEdit } from './sites';
 import { UserList, UserEdit, UserCreate } from './users';
 import { apiUrl } from './settings';
 import simpleRestProvider from 'ra-data-simple-rest';
@@ -24,7 +24,7 @@ const dataProvider = simpleRestProvider(apiUrl, httpClient);
 
 const App = () => (
     <Admin dashboard={Dashboard} authProvider={authProvider} dataProvider={dataProvider}>
-        <Resource name="sites" list={SiteList} edit={SiteEdit} create={SiteCreate} icon={SiteIcon} />
+        <Resource name="sites" list={SiteList} edit={SiteEdit} icon={SiteIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} icon={UserIcon} />
     </Admin>
 );

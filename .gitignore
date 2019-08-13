@@ -1,3 +1,7 @@
 /.idea
 /.vscode
 /ssl
+/react-admin-prj/node_modules/
+/react-admin-prj/yarn.lock
+/__pycache__
+/db.json

@@ -8,9 +8,21 @@ site_bottle_app = Bottle()
 
 # Default site data
 default_site = {
-    'name': 'Site Name',
-    'title': 'Site Title',
-    'info': 'Site Info',
+    'name': 'Name',
+    'site_title': 'Title',
+    'site_description': 'Description\nDescription\nDescription',
+    'site_copyright': 'Copyright',
+    'page_title': 'Page',
+    'page_content': 'Content\nContent\nContent',
+    'owner_name': 'Owner Name',
+    'owner_email': 'Owner Email',
+    'owner_address': 'Address\nAddress\nAddress',
+    'owner_map_url': 'https://goo.gl/maps/Fxpy9',
+    'owner_phones': ['(12)12345-1234', '(12)12345-1234'],
+    'owner_whatsapp_phones': ['(12)12345-1234', '(12)12345-1234'],
+    'owner_facebook_url': 'https://www.facebook.com/facebook',
+    'owner_twitter_url': 'https://twitter.com/twitter',
+    'owner_instagram_url': 'https://www.instagram.com/instagram/',
     'template_dir': 'templates/startbootstrap-creative-gh-pages',
     'template_file': 'template.html',
     'template_assets': ['css', 'img', 'js', 'vendor']
@@ -26,11 +38,24 @@ main_site = site_table.get(doc_id=1)
 # Site Rest App
 class SiteRestApp(GenericRestApp):
 
+    def __init__(self, bottle_app, db_table, default_data):
+        super().__init__(bottle_app, db_table, default_data)
+
+        # Extra rest route methods
+        self._bottle_app.get('/main_site', callback=self._get_main_site)
+
+    def _post_new_doc(self):
+        return json_response({'message': 'New Site Cannot be Added'}, status=400)
+
     def _delete_doc(self, doc_id):
         # Default site cannot be deleted
         if doc_id == 1:
             return json_response({'message': 'Default Site Cannot be Deleted'}, status=400)
         super()._delete_doc(doc_id)
+
+    @staticmethod
+    def _get_main_site():
+        return json_response({'id': main_site.doc_id, **main_site})
 
 
 # Create Site Rest App
