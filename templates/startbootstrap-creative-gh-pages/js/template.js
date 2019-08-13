@@ -32,6 +32,9 @@
             $('#owner-twitter-url-a').attr("href", data.owner_twitter_url);
             $('#owner-instagram-url-a').text(data.owner_instagram_url);
             $('#owner-instagram-url-a').attr("href", data.owner_instagram_url);
+
+            // Reveal document.body
+            $(document.body).fadeIn(2500);
         });
     });
 })(jQuery); // End of use strict
