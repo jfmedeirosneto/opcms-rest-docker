@@ -1,12 +1,14 @@
-(function($) {
+(function ($) {
     "use strict"; // Start of use strict
     // Get data of main site
-    $(document).ready(function() {
+    $(document).ready(function () {
         $.ajax({
             url: "../sites/main_site"
-        }).then(function(data) {
+        }).then(function (data) {
             // Site Data
             $(document).attr("title", data.site_title);
+            $('meta[name="description"]').attr('content', data.site_description.replace(/\n/g, '\u00A0'));
+            $('meta[name="author"]').attr('content', data.owner_name);
             $('#site-title-a').text(data.site_title);
             $('#site-title-h1').text(data.site_title);
             $('#site-description-p').html(data.site_description.replace(/\n/g, '<br/>'));
@@ -22,8 +24,17 @@
             $('#owner-address-p').html(data.owner_address.replace(/\n/g, '<br/>'));
             $('#owner-map-url-a').text(data.owner_map_url);
             $('#owner-map-url-a').attr("href", data.owner_map_url);
-            $('#owner-phones-div').html(data.owner_phones.join('<br/>'));
-            $('#owner-whatsapp-phones-div').html(data.owner_whatsapp_phones.join('<br/>'));
+            $.each(data.owner_phones, function (index, value) {
+                $('#owner-phones-div').append(
+                    '<a class="d-block mb-3" href="tel:' + value + '">' + value + '</a>'
+                );
+            });
+            $.each(data.owner_whatsapp_phones, function (index, value) {
+                var whatsapp_number = parseInt(value.replace(/[^0-9]/g, ''), 10);
+                $('#owner-whatsapp-phones-div').append(
+                    '<a class="d-block mb-3" href="https://wa.me/' + whatsapp_number + '">' + value + '</a>'
+                );
+            });
             $('#owner-email-a').text(data.owner_email);
             $('#owner-email-a').attr("href", 'mailto:' + data.owner_email);
             $('#owner-facebook-url-a').text(data.owner_facebook_url);
