@@ -1,4 +1,3 @@
-// in src/users.js
 import React from 'react';
 import { List, Datagrid, TextField, Edit, Create, SimpleForm, DisabledInput, TextInput, LongTextInput } from 'react-admin';
 
@@ -7,7 +6,7 @@ const NonePagination = ({ page, perPage, total, setPage }) => {
 };
 
 export const SiteList = props => (
-    <List {...props} exporter={false} pagination={<NonePagination/>}>
+    <List {...props} exporter={false} pagination={<NonePagination />}>
         <Datagrid rowClick="edit">
             <TextField source="id" sortable={false} />
             <TextField source="name" sortable={false} />
@@ -45,7 +44,7 @@ export const SiteEdit = props => (
 export const SiteCreate = props => (
     <Create {...props}>
         <SimpleForm>
-        <TextInput source="name" fullWidth />
+            <TextInput source="name" fullWidth />
             <TextInput source="site_title" fullWidth />
             <LongTextInput source="site_description" fullWidth />
             <TextInput source="site_copyright" fullWidth />

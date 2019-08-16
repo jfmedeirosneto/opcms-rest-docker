@@ -3,7 +3,7 @@
     // Get data of main site
     $(document).ready(function () {
         $.ajax({
-            url: "../sites/main_site"
+            url: "../sites/public/1"
         }).then(function (data) {
             // Site Data
             $(document).attr("title", data.site_title);

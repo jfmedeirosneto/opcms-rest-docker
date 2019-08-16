@@ -42,7 +42,7 @@ class SiteRestApp(GenericRestApp):
         super().__init__(bottle_app, db_table, default_data)
 
         # Extra rest route methods
-        self._bottle_app.get('/main_site', callback=self._get_main_site)
+        self._bottle_app.get('/public/<doc_id:int>', callback=self._get_doc)
 
     def _post_new_doc(self):
         return json_response({'message': 'New Site Cannot be Added'}, status=400)
@@ -52,10 +52,6 @@ class SiteRestApp(GenericRestApp):
         if doc_id == 1:
             return json_response({'message': 'Default Site Cannot be Deleted'}, status=400)
         super()._delete_doc(doc_id)
-
-    @staticmethod
-    def _get_main_site():
-        return json_response({'id': main_site.doc_id, **main_site})
 
 
 # Create Site Rest App

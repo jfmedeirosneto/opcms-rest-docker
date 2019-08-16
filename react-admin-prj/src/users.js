@@ -1,4 +1,3 @@
-// in src/users.js
 import React from 'react';
 import { List, Datagrid, TextField, EmailField, Edit, Create, SimpleForm, DisabledInput, TextInput } from 'react-admin';
 
@@ -7,7 +6,7 @@ const NonePagination = ({ page, perPage, total, setPage }) => {
 };
 
 export const UserList = props => (
-    <List {...props} exporter={false} pagination={<NonePagination/>}>
+    <List {...props} exporter={false} pagination={<NonePagination />}>
         <Datagrid rowClick="edit">
             <TextField source="id" sortable={false} />
             <TextField source="username" sortable={false} />
@@ -33,7 +32,7 @@ export const UserCreate = props => (
     <Create {...props}>
         <SimpleForm>
             <TextInput source="username" />
-            <TextInput source="password"  type="password" />
+            <TextInput source="password" type="password" />
             <TextInput source="name" />
             <TextInput source="email" type="email" />
         </SimpleForm>

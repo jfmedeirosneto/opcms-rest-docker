@@ -6,7 +6,9 @@ import os
 import ssl
 from settings import base_dir
 from site_app import main_site, site_bottle_app
-from user_app import main_user, user_bottle_app
+from user_app import user_bottle_app
+from portfolio_app import portfolio_bottle_app
+
 
 # Bottle app
 main_bottle_app = Bottle()
@@ -65,5 +67,7 @@ class SSLCherryPyServer(ServerAdapter):
 if __name__ == "__main__":
     main_bottle_app.mount('/sites', site_bottle_app)
     main_bottle_app.mount('/users', user_bottle_app)
+    main_bottle_app.mount('/portfolios', portfolio_bottle_app)
+
     main_bottle_app.run(host='0.0.0.0', port=8080)
     # app.run(host='0.0.0.0', port=8080, server=SSLCherryPyServer)

@@ -1,10 +1,11 @@
-// in src/App.js
 import React from 'react';
 import { fetchUtils, Admin, Resource } from 'react-admin';
 import { SiteList, SiteEdit } from './sites';
 import { UserList, UserEdit, UserCreate } from './users';
+import { PortfolioList, PortfolioEdit, PortfolioCreate } from './portfolios';
 import { apiUrl } from './settings';
 import simpleRestProvider from 'ra-data-simple-rest';
+import addUploadFeature from './addUploadFeature';
 
 import Dashboard from './Dashboard';
 import authProvider from './authProvider';
@@ -21,11 +22,13 @@ const httpClient = (url, options = {}) => {
     return fetchUtils.fetchJson(url, options);
 }
 const dataProvider = simpleRestProvider(apiUrl, httpClient);
+const uploadCapableDataProvider = addUploadFeature(dataProvider);
 
 const App = () => (
-    <Admin dashboard={Dashboard} authProvider={authProvider} dataProvider={dataProvider}>
+    <Admin dashboard={Dashboard} authProvider={authProvider} dataProvider={uploadCapableDataProvider}>
         <Resource name="sites" list={SiteList} edit={SiteEdit} icon={SiteIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} icon={UserIcon} />
+        <Resource name="portfolios" list={PortfolioList} edit={PortfolioEdit} create={PortfolioCreate} />
     </Admin>
 );
 
