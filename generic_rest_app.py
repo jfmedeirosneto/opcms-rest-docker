@@ -10,15 +10,6 @@ def json_response(value, status=200):
     return json.dumps(value)
 
 
-def enable_cors():
-    """Add headers to enable CORS"""
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Authorization, Origin, Accept, Content-Type, X-Requested-With'
-    response.headers['Access-Control-Expose-Headers'] = 'X-Total-Count, Content-Range'
-    response.headers['Allow'] = 'PUT, GET, POST, DELETE, OPTIONS'
-
-
 def check_jwt_authorization(success_func):
     """
     Check JWT authorization wrapper
@@ -57,7 +48,7 @@ class GenericRestApp:
         self._default_data = default_data
 
         # CORS
-        self._bottle_app.add_hook('after_request', enable_cors)
+        self._bottle_app.add_hook('after_request', self._enable_cors)
         self._bottle_app.route('/<:re:.*>', method='OPTIONS', callback=self._options_generic)
 
         # Rest route methods
@@ -69,12 +60,23 @@ class GenericRestApp:
         self._bottle_app.get('/<doc_id:int>/<doc_key>', callback=check_jwt_authorization(self._get_doc_data))
         self._bottle_app.put('/<doc_id:int>/<doc_key>', callback=check_jwt_authorization(self._put_doc_data))
 
-    def _options_generic(self):
+    @staticmethod
+    def _enable_cors():
+        """Add headers to enable CORS"""
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+        response.headers[
+            'Access-Control-Allow-Headers'] = 'Authorization, Origin, Accept, Content-Type, X-Requested-With'
+        response.headers['Access-Control-Expose-Headers'] = 'X-Total-Count, Content-Range'
+        response.headers['Allow'] = 'PUT, GET, POST, DELETE, OPTIONS'
+
+    @staticmethod
+    def _options_generic():
         """
         Generic options request
         :return: 200 OK response
         """
-        return
+        return json_response({})
 
     def _get_docs(self):
         """
@@ -132,7 +134,7 @@ class GenericRestApp:
         else:
             return json_response({'message': 'Doc \'%d\' Not Found' % doc_id}, status=404)
 
-        return {}
+        return json_response({})
 
     def _put_doc(self, doc_id):
         """

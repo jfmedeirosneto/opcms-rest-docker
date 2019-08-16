@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from bottle import Bottle, request, BaseRequest, static_file
-from PIL import Image
+from PIL import Image, ImageOps
 from io import BytesIO
 import base64
 import os
@@ -27,14 +27,14 @@ default_portfolio = {
     'pictures': [
         {
             'id': 'id1',
-            'fullsize_url': '/portfolios/pictures/id1_full.jpg',
-            'thumbnail_url': '/portfolios/pictures/id1_thumb.jpg',
+            'fullsize_url': '/portfolios/public/picture/id1_full.jpg',
+            'thumbnail_url': '/portfolios/public/picture/id1_thumb.jpg',
             'title': 'Title'
         },
         {
             'id': 'id2',
-            'fullsize_url': '/portfolios/pictures/id2_full.jpg',
-            'thumbnail_url': '/portfolios/pictures/id2_thumb.jpg',
+            'fullsize_url': '/portfolios/public/picture/id2_full.jpg',
+            'thumbnail_url': '/portfolios/public/picture/id2_thumb.jpg',
             'title': 'Title'
         }
     ],
@@ -67,11 +67,22 @@ class PortfolioRestApp(GenericRestApp):
         # Extra rest route methods
         self._bottle_app.get('/public', callback=self._get_docs)
         self._bottle_app.get('/public/<doc_id:int>', callback=self._get_doc)
-        self._bottle_app.route('/picture/<filepath:path>', callback=self._route_picture)
+        self._bottle_app.route('/public/picture/<filepath:path>', callback=self._route_picture)
 
     @staticmethod
     def _route_picture(filepath):
         return static_file(filepath, root=image_dir)
+
+    @staticmethod
+    def _delete_picture_list(picture_list):
+        for picture in picture_list:
+            picture_id = picture['id']
+            fullsize_file = os.path.join(image_dir, picture_id + '_full.jpg')
+            thumbnail_file = os.path.join(image_dir, picture_id + '_thumb.jpg')
+            if os.path.exists(fullsize_file):
+                os.remove(fullsize_file)
+            if os.path.exists(thumbnail_file):
+                os.remove(thumbnail_file)
 
     def _post_new_doc(self):
         # Verify json data
@@ -119,6 +130,11 @@ class PortfolioRestApp(GenericRestApp):
             # Retain picture list in json_data
             retain_picture_list = [picture for picture in filtered_json_data['pictures'] if 'id' in picture]
 
+            # Verify deleted pictures
+            deleted_picture_list = [picture for picture in actual_picture_list
+                                    if not find_picture_by_id(retain_picture_list, picture['id'])]
+            self._delete_picture_list(deleted_picture_list)
+
             # Verify image type and image size
             image_object_list = []
             for picture in new_picture_list:
@@ -151,14 +167,14 @@ class PortfolioRestApp(GenericRestApp):
                 try:
                     # Save images fullsize and thumbnail
                     image_object.save(fullsize_file, "JPEG")
-                    image_object.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
-                    image_object.save(thumbnail_file, "JPEG")
+                    thumbnail_image_object = ImageOps.fit(image_object, THUMB_SIZE, Image.ANTIALIAS)
+                    thumbnail_image_object.save(thumbnail_file, "JPEG")
 
                     # Append new picture data
                     created_picture_list.append({
                         'id': picture_id,
-                        'fullsize_url': 'http://localhost:8080/portfolios/picture/' + fullsize_file_name,
-                        'thumbnail_url': 'http://localhost:8080/portfolios/picture/' + thumbnail_file_name,
+                        'fullsize_url': 'portfolios/public/picture/' + fullsize_file_name,
+                        'thumbnail_url': 'portfolios/public/picture/' + thumbnail_file_name,
                         'title': '%s - %s' % (filtered_json_data['category'], filtered_json_data['project_name'])
                     })
                 except IOError:
@@ -167,39 +183,26 @@ class PortfolioRestApp(GenericRestApp):
                         os.remove(fullsize_file)
                     if os.path.exists(thumbnail_file):
                         os.remove(thumbnail_file)
-                    for new_created_picture in created_picture_list:
-                        picture_id = new_created_picture['id']
-                        fullsize_file_name = picture_id + '_full.jpg'
-                        thumbnail_file_name = picture_id + '_thumb.jpg'
-                        fullsize_file = os.path.join(image_dir, fullsize_file_name)
-                        thumbnail_file = os.path.join(image_dir, thumbnail_file_name)
-                        if os.path.exists(fullsize_file):
-                            os.remove(fullsize_file)
-                        if os.path.exists(thumbnail_file):
-                            os.remove(thumbnail_file)
+                    self._delete_picture_list(created_picture_list)
+
                     return json_response({'message': 'Save Images Failed'}, status=400)
 
-            # New pictures list
+            # New pictures list (retain + created)
             filtered_json_data['pictures'] = [*retain_picture_list, *created_picture_list]
-
-            # Verify deleted pictures
-            deleted_picture_list = [picture for picture in actual_picture_list if
-                                    not find_picture_by_id(filtered_json_data['pictures'],
-                                                           picture['id'])]
-            for deleted_picture in deleted_picture_list:
-                picture_id = deleted_picture['id']
-                fullsize_file = os.path.join(image_dir, picture_id + '_full.jpg')
-                thumbnail_file = os.path.join(image_dir, picture_id + '_thumb.jpg')
-                if os.path.exists(fullsize_file):
-                    os.remove(fullsize_file)
-                if os.path.exists(thumbnail_file):
-                    os.remove(thumbnail_file)
-
         else:
             filtered_json_data['pictures'] = []
 
         self._db_table.update(filtered_json_data, doc_ids=[doc_id])
         return json_response({'id': portfolio_doc.doc_id, **filtered_json_data})
+
+    def _delete_doc(self, doc_id):
+        # Verify doc
+        portfolio_doc = self._db_table.get(doc_id=doc_id)
+        if portfolio_doc:
+            # Delete all pictures
+            self._delete_picture_list(portfolio_doc['pictures'])
+
+        return super()._delete_doc(doc_id)
 
 
 # Create Portfolio Rest App
