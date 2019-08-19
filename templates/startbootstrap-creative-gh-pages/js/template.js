@@ -19,22 +19,30 @@
             $('#page-title-h2').text(site_data.page_title);
             $('#page-content-p').html(site_data.page_content.replace(/\n/g, '<br/>'));
 
+            // Prepare Owner Data
+            var owner_phones_template_data = [];
+            $.each(site_data.owner_phones, function (index, value) {
+                owner_phones_template_data.push({
+                    'href': 'tel:' + value,
+                    'content': value
+                });
+            });
+            var whatsapp_phones_template_data = [];
+            $.each(site_data.owner_whatsapp_phones, function (index, value) {
+                var whatsapp_number = parseInt(value.replace(/[^0-9]/g, ''), 10);
+                whatsapp_phones_template_data.push({
+                    'href': 'https://wa.me/' + whatsapp_number,
+                    'content': value
+                });
+            });
+
             // Owner Data
             $('#owner-name-h3').text(site_data.owner_name);
             $('#owner-address-p').html(site_data.owner_address.replace(/\n/g, '<br/>'));
             $('#owner-map-url-a').text(site_data.owner_map_url);
             $('#owner-map-url-a').attr("href", site_data.owner_map_url);
-            $.each(site_data.owner_phones, function (index, value) {
-                $('#owner-phones-div').append(
-                    '<a class="d-block mb-3" href="tel:' + value + '">' + value + '</a>'
-                );
-            });
-            $.each(site_data.owner_whatsapp_phones, function (index, value) {
-                var whatsapp_number = parseInt(value.replace(/[^0-9]/g, ''), 10);
-                $('#owner-whatsapp-phones-div').append(
-                    '<a class="d-block mb-3" href="https://wa.me/' + whatsapp_number + '">' + value + '</a>'
-                );
-            });
+            $('#owner-phones-div').loadTemplate($("#contact-link-template"), owner_phones_template_data);
+            $('#owner-whatsapp-phones-div').loadTemplate($("#contact-link-template"), whatsapp_phones_template_data);
             $('#owner-email-a').text(site_data.owner_email);
             $('#owner-email-a').attr("href", 'mailto:' + site_data.owner_email);
             $('#owner-facebook-url-a').text(site_data.owner_facebook_url);
