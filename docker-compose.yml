@@ -1,11 +1,10 @@
 version: "3.7"
 services:
-  webapp:
+  app:
     build: .
-    command: "python /var/www/opcms-rest-docker/main.py"
-#    command: "python -m ptvsd --host 0.0.0.0 --port 5678 /var/www/opcms-rest-docker/main.py"
     volumes:
       - .:/var/www/opcms-rest-docker
     ports:
-      - "8080:8080"
-#      - "5678:5678"
+      - 8080:8080
+    command:
+      "gunicorn --workers=2 --bind=0.0.0.0:8080 main:app"

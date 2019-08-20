@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from bottle import Bottle, static_file, ServerAdapter
-from cheroot import wsgi
-from cheroot.ssl.builtin import BuiltinSSLAdapter
 import os
 import ssl
 from settings import base_dir
@@ -44,30 +42,14 @@ def get_admin_home():
     return static_file('index.html', root=admin_dir)
 
 
-# Create our own sub-class of Bottle's ServerAdapter
-# so that we can specify SSL. Using just server='cherrypy'
-# uses the default cherrypy server, which doesn't use SSL
-class SSLCherryPyServer(ServerAdapter):
+# Mount apps
+main_bottle_app.mount('/sites', site_bottle_app)
+main_bottle_app.mount('/users', user_bottle_app)
+main_bottle_app.mount('/portfolios', portfolio_bottle_app)
 
-    def run(self, handler):
-        server = wsgi.Server((self.host, self.port), handler)
-        server.ssl_adapter = BuiltinSSLAdapter('localhost.crt', 'localhost.key')
-
-        # By default, the server will allow negotiations with extremely old protocols
-        # that are susceptible to attacks, so we only allow TLSv1.2
-        server.ssl_adapter.context.options |= ssl.OP_NO_TLSv1
-        server.ssl_adapter.context.options |= ssl.OP_NO_TLSv1_1
-
-        try:
-            server.start()
-        finally:
-            server.stop()
-
-
+# Main entry
 if __name__ == "__main__":
-    main_bottle_app.mount('/sites', site_bottle_app)
-    main_bottle_app.mount('/users', user_bottle_app)
-    main_bottle_app.mount('/portfolios', portfolio_bottle_app)
-
     main_bottle_app.run(host='0.0.0.0', port=8080)
-    # app.run(host='0.0.0.0', port=8080, server=SSLCherryPyServer)
+
+# App
+app = main_bottle_app
