@@ -1,10 +1,14 @@
 version: "3.7"
+
 services:
   app:
-    build: .
     volumes:
-      - .:/var/www/opcms-rest-docker
+      - docker-app-data:/var/www/opcms-rest-docker/app-data
+    build: .
     ports:
       - 8080:8080
     command:
       "gunicorn --workers=2 --bind=0.0.0.0:8080 main:app"
+
+volumes:
+  docker-app-data:

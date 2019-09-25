@@ -6,7 +6,7 @@ import base64
 import os
 import uuid
 from generic_rest_app import GenericRestApp, json_response, get_filtered_dict_data
-from settings import db, base_dir
+from settings import db, app_data_dir
 
 # Set MEMFILE_MAX to upload rawFile in body (10Mb)
 BaseRequest.MEMFILE_MAX = 10 * 1024 * 1024
@@ -15,7 +15,9 @@ BaseRequest.MEMFILE_MAX = 10 * 1024 * 1024
 THUMB_SIZE = (650, 350)
 
 # Image path
-image_dir = os.path.join(base_dir, 'images')
+image_dir = os.path.join(app_data_dir, 'images')
+if not os.path.exists(image_dir):
+    os.makedirs(image_dir)
 
 # Bottle app
 portfolio_bottle_app = Bottle()
