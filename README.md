@@ -6,9 +6,9 @@ Copyright &copy; 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
 ## Main Features
 
 - CMS based on Single Page site
-- Front section
+- Title section
+- Page section
 - Portfolio section
-- About section
 - Contact section
 - Full Admin page
 - REST powered
