@@ -1,7 +1,7 @@
 # opcms-rest-docker
 opcms-rest-docker - One Page CMS based on REST and Docker architecturals
 
-Copyright(c) 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
+Copyright &copy; 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
 
 ## Main Features
 
@@ -14,6 +14,7 @@ Copyright(c) 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
 - REST powered
 - Docker powered
 - Python powered
+- React Admin powered
 
 ## Screenshots
 
@@ -34,3 +35,10 @@ Copyright(c) 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
 #### Portfolio Admin Page
 
 ![Home](https://raw.githubusercontent.com/jfmedeirosneto/opcms-rest-docker/master/screenshots/screenshot4.png "Portfolio Admin Page")
+
+## Credits
+
+- [Docker](https://www.docker.com/)
+- [React Admin](https://marmelab.com/react-admin/)
+- [Python](https://www.python.org/)
+- Themes by [Start Bootstrap](http://startbootstrap.com)
