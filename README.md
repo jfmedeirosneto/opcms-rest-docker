@@ -11,8 +11,9 @@ Copyright(c) 2019 João Neto <<jfmedeirosneto@yahoo.com.br>>
 - About section
 - Contact section
 - Full Admin page
-- Python powered
+- REST powered
 - Docker powered
+- Python powered
 
 ## Screenshots
 
