@@ -17,7 +17,7 @@
             $('#site-title-a').text(site_data.site_title);
             $('#site-title-h1').text(site_data.site_title);
             $('#site-description-p').html(site_data.site_description.replace(/\n/g, '<br/>'));
-            $('#site-copyright-div').text(site_data.site_copyright);
+            $('#site-copyright-div').html(site_data.site_copyright);
 
             // Page data
             $('#page-title-a').text(site_data.page_title);
